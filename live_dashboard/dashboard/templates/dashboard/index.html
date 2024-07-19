@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Stocks Dashboard</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ws = new WebSocket('ws://' + window.location.host + '/ws/stocks/');
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                const stocksList = document.getElementById('stocks');
+                stocksList.innerHTML = '';
+                data.forEach(stock => {
+                    const li = document.createElement('li');
+                    li.textContent = `${stock.symbol}: $${stock.price} (Last updated: ${stock.last_updated})`;
+                    stocksList.appendChild(li);
+                });
+            };
+
+            ws.onclose = function(event) {
+                console.error('WebSocket closed unexpectedly');
+            };
+        });
+    </script>
+</head>
+<body>
+    <h1>Live Stocks Dashboard</h1>
+    <ul id="stocks"></ul>
+</body>
+</html>
